@@ -1,0 +1,177 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Wayo Orange Colors */
+  --color-wayo: #F47A1F;
+  --color-wayo-dark: #F06423;
+  --color-wayo-light: #FC7B30;
+  --color-wayo-lighter: #ffd7b7;
+  --color-wayo-lightest: #fffdf9;
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #1F2937;
+  --card: #ffffff;
+  --card-foreground: #1F2937;
+  --popover: #ffffff;
+  --popover-foreground: #1F2937;
+  /* Wayo Orange Primary */
+  --primary: #F47A1F;
+  --primary-foreground: #ffffff;
+  --secondary: #f7f7f7;
+  --secondary-foreground: #1F2937;
+  --muted: #f7f7f7;
+  --muted-foreground: #6B7280;
+  --accent: #fff6ed;
+  --accent-foreground: #F47A1F;
+  --destructive: #ef4444;
+  --border: #ececec;
+  --input: #ececec;
+  --ring: #F47A1F;
+  /* Chart colors using orange spectrum */
+  --chart-1: #F47A1F;
+  --chart-2: #FC7B30;
+  --chart-3: #fbb040;
+  --chart-4: #F06423;
+  --chart-5: #ffd7b7;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1F2937;
+  --sidebar-primary: #F47A1F;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fff6ed;
+  --sidebar-accent-foreground: #F47A1F;
+  --sidebar-border: #ececec;
+  --sidebar-ring: #F47A1F;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #f7f7f7;
+  --card: #242424;
+  --card-foreground: #f7f7f7;
+  --popover: #242424;
+  --popover-foreground: #f7f7f7;
+  --primary: #F47A1F;
+  --primary-foreground: #ffffff;
+  --secondary: #2d2d2d;
+  --secondary-foreground: #f7f7f7;
+  --muted: #2d2d2d;
+  --muted-foreground: #9ca3af;
+  --accent: #2d2d2d;
+  --accent-foreground: #f7f7f7;
+  --destructive: #ef4444;
+  --border: #3d3d3d;
+  --input: #3d3d3d;
+  --ring: #F47A1F;
+  --chart-1: #F47A1F;
+  --chart-2: #FC7B30;
+  --chart-3: #fbb040;
+  --chart-4: #F06423;
+  --chart-5: #ffd7b7;
+  --sidebar: #242424;
+  --sidebar-foreground: #f7f7f7;
+  --sidebar-primary: #F47A1F;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2d2d2d;
+  --sidebar-accent-foreground: #f7f7f7;
+  --sidebar-border: #3d3d3d;
+  --sidebar-ring: #F47A1F;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom utility classes for Wayo colors */
+@layer utilities {
+  .bg-wayo {
+    background-color: #F47A1F;
+  }
+  .bg-wayo-dark {
+    background-color: #F06423;
+  }
+  .bg-wayo-light {
+    background-color: #FC7B30;
+  }
+  .bg-wayo-lighter {
+    background-color: #ffd7b7;
+  }
+  .bg-wayo-lightest {
+    background-color: #fffdf9;
+  }
+  .text-wayo {
+    color: #F47A1F;
+  }
+  .text-wayo-dark {
+    color: #F06423;
+  }
+  .border-wayo {
+    border-color: #F47A1F;
+  }
+  .ring-wayo {
+    --tw-ring-color: #F47A1F;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}

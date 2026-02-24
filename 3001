@@ -1,0 +1,39 @@
+▲ Next.js 16.1.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.132:3000
+- Environments: .env
+- Experiments (use with caution):
+  · serverActions
+
+✓ Starting...
+✓ Ready in 478ms
+[next-auth][warn][DEBUG_ENABLED] 
+https://next-auth.js.org/warnings#debug_enabled
+⨯ TypeError: Header 'Location' has invalid value: '/auth/error?error=
+Invalid `{imported module ./src/lib/db.ts}["db"].user.findUnique()` invocation in
+/Users/mohamedbouhouti/Documents/Coding Projects/Marketing project/version 9/.next/dev/server/chunks/[root-of-the-server]__576d1866._.js:248:160
+
+  245 }
+  246 // In development, allow login with any email
+  247 // In production, you should implement proper authentication
+→ 248 let user = await {imported module ./src/lib/db.ts}["db"].user.findUnique(
+error: Environment variable not found: DATABASE_URL.
+  -->  schema.prisma:10
+   | 
+ 9 |   provider = "sqlite"
+10 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1'
+    at <unknown> (file:/Users/mohamedbouhouti/Documents/Coding%20Projects/Marketing%20project/version%209/src/lib/auth.ts:22:34)
+    at <unknown> (-->  schema.prisma:10)
+    at set (null)
+    at processTicksAndRejections (null)
+  20 |         // In development, allow login with any email
+  21 |         // In production, you should implement proper authentication
+> 22 |         let user = await db.user.findUnique({
+     |                                  ^
+  23 |           where: { email: credentials.email },
+  24 |         });
+  25 |
+ GET /api/auth/error?error=%0AInvalid%20%60__TURBOPACK__imported__module__%245b%24project%245d2f%24src%242f%24lib%242f%24db%242e%24ts__%245b%24app%242d%24route%245d%24__%2428%24ecmascript%2429%24__%5B%22db%22%5D.user.findUnique()%60%20invocation%20in%0A%2FUsers%2Fmohamedbouhouti%2FDocuments%2FCoding%20Projects%2FMarketing%20project%2Fversion%209%2F.next%2Fdev%2Fserver%2Fchunks%2F%5Broot-of-the-server%5D__576d1866._.js%3A248%3A160%0A%0A%20%20245%20%7D%0A%20%20246%20%2F%2F%20In%20development%2C%20allow%20login%20with%20any%20email%0A%20%20247%20%2F%2F%20In%20production%2C%20you%20should%20implement%20proper%20authentication%0A%E2%86%92%20248%20let%20user%20%3D%20await%20__TURBOPACK__imported__module__%245b%24project%245d2f%24src%242f%24lib%242f%24db%242e%24ts__%245b%24app%242d%24route%245d%24__%2428%24ecmascript%2429%24__%5B%22db%22%5D.user.findUnique(%0Aerror%3A%20Environment%20variable%20not%20found%3A%20DATABASE_URL.%0A%20%20--%3E%20%20schema.prisma%3A10%0A%20%20%20%7C%20%0A%209%20%7C%20%20%20provider%20%3D%20%22sqlite%22%0A10%20%7C%20%20%20url%20%20%20%20%20%20%3D%20env(%22DATABASE_URL%22)%0A%20%20%20%7C%20%0A%0AValidation%20Error%20Count%3A%201 500 in 526ms (compile: 475ms, render: 50ms)

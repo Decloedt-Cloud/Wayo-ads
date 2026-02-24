@@ -1,0 +1,218 @@
+$ next build
+▲ Next.js 16.1.3 (Turbopack)
+- Environments: .env
+- Experiments (use with caution):
+  · serverActions
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+Turbopack build encountered 1 warnings:
+./src/server/payouts/payoutService.ts:154:44
+Module not found: Can't resolve './dynamicCpmService'
+[0m [90m 152 |[39m     }
+ [90m 153 |[39m
+[31m[1m>[22m[39m[90m 154 |[39m     [36mconst[39m { calculateAdjustedCpm } [33m=[39m [36mawait[39m [36mimport[39m([32m'./dynamicCpmService'[39m)[33m;[39m
+ [90m     |[39m                                            [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 155 |[39m     
+ [90m 156 |[39m     [36mlet[39m finalAmountCents [33m=[39m amountCents[33m;[39m
+ [90m 157 |[39m     [36mlet[39m cpmAdjustment[33m:[39m {[0m
+
+
+
+Import trace:
+  App Route:
+    ./src/server/payouts/payoutService.ts
+    ./src/app/api/admin/jobs/check-post-views/route.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+✓ Compiled successfully in 4.0s
+  Skipping validation of types
+  Collecting page data using 13 workers ...
+  Generating static pages using 13 workers (0/138) ...
+  Generating static pages using 13 workers (34/138) 
+  Generating static pages using 13 workers (68/138) 
+  Generating static pages using 13 workers (103/138) 
+✓ Generating static pages using 13 workers (138/138) in 307.5ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /[lang]
+├ ƒ /[lang]/creator/pricing
+├ ƒ /[lang]/how-it-works
+├ ƒ /[lang]/pricing
+├ ƒ /[lang]/privacy
+├ ƒ /[lang]/terms
+├ ƒ /admin/emails
+├ ƒ /admin/notifications
+├ ƒ /admin/settings/business
+├ ƒ /admin/settings/email
+├ ƒ /admin/settings/platform
+├ ƒ /admin/settings/stripe
+├ ƒ /admin/withdrawals
+├ ƒ /api
+├ ƒ /api/admin/ai/usage
+├ ƒ /api/admin/company-business-info
+├ ƒ /api/admin/creator-risk/[creatorId]
+├ ƒ /api/admin/creator-velocity
+├ ƒ /api/admin/creators
+├ ƒ /api/admin/debug/langfuse-test
+├ ƒ /api/admin/debug/trace-test
+├ ƒ /api/admin/debug/tracking
+├ ƒ /api/admin/email-settings
+├ ƒ /api/admin/email-settings/test-email
+├ ƒ /api/admin/emails/logs
+├ ƒ /api/admin/emails/preview/[template]
+├ ƒ /api/admin/emails/send-test
+├ ƒ /api/admin/emails/templates
+├ ƒ /api/admin/jobs/aggregate-creator-metrics
+├ ƒ /api/admin/jobs/check-post-views
+├ ƒ /api/admin/jobs/compute-campaign-financials
+├ ƒ /api/admin/jobs/compute-trust-scores
+├ ƒ /api/admin/jobs/refresh-youtube-status
+├ ƒ /api/admin/jobs/release-payouts
+├ ƒ /api/admin/ledger
+├ ƒ /api/admin/notifications/broadcast
+├ ƒ /api/admin/pacing
+├ ƒ /api/admin/payouts
+├ ƒ /api/admin/platform-settings
+├ ƒ /api/admin/stripe-settings
+├ ƒ /api/admin/stripe-settings/test-connection
+├ ƒ /api/admin/transactions
+├ ƒ /api/admin/withdrawals
+├ ƒ /api/advertiser/campaigns/[id]/dynamic-cpm
+├ ƒ /api/advertiser/campaigns/[id]/financial-summary
+├ ƒ /api/advertiser/onboarding
+├ ƒ /api/advertiser/pacing
+├ ƒ /api/advertiser/videos
+├ ƒ /api/advertiser/videos/[id]
+├ ƒ /api/ai/analyze
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/auth/register
+├ ƒ /api/campaigns
+├ ƒ /api/campaigns/[id]
+├ ƒ /api/campaigns/[id]/applications/[applicationId]
+├ ƒ /api/campaigns/[id]/applications/[applicationId]/approve
+├ ƒ /api/campaigns/[id]/applications/[applicationId]/reject
+├ ƒ /api/campaigns/[id]/apply
+├ ƒ /api/campaigns/[id]/links
+├ ƒ /api/campaigns/[id]/posts/[postId]/approve
+├ ƒ /api/campaigns/[id]/posts/[postId]/reject
+├ ƒ /api/convert
+├ ƒ /api/creator/ai/compare
+├ ƒ /api/creator/ai/creator-intelligence
+├ ƒ /api/creator/ai/ctr-audit
+├ ƒ /api/creator/ai/ctr-comparison
+├ ƒ /api/creator/ai/ctr-probability
+├ ƒ /api/creator/ai/expected-value
+├ ƒ /api/creator/ai/pattern-blending
+├ ƒ /api/creator/ai/retention-audit
+├ ƒ /api/creator/ai/retention-probability
+├ ƒ /api/creator/ai/title-thumbnail
+├ ƒ /api/creator/ai/tokens
+├ ƒ /api/creator/ai/usage/breakdown
+├ ƒ /api/creator/ai/usage/cost-analysis
+├ ƒ /api/creator/ai/viral-patterns
+├ ƒ /api/creator/analytics
+├ ƒ /api/creator/applications
+├ ƒ /api/creator/business-profile
+├ ƒ /api/creator/campaigns/[id]/submit-post
+├ ƒ /api/creator/featured
+├ ƒ /api/creator/links
+├ ƒ /api/creator/onboarding
+├ ƒ /api/creator/stats
+├ ƒ /api/creator/stripe-connect/login
+├ ƒ /api/creator/stripe-connect/onboard
+├ ƒ /api/creator/submissions/[id]/refresh-youtube-status
+├ ƒ /api/creator/trust-score
+├ ƒ /api/creator/videos
+├ ƒ /api/creator/withdrawal
+├ ƒ /api/creator/youtube/callback
+├ ƒ /api/creator/youtube/channel
+├ ƒ /api/creator/youtube/connect
+├ ƒ /api/creator/youtube/disconnect
+├ ƒ /api/creator/youtube/refresh
+├ ƒ /api/creator/youtube/search
+├ ƒ /api/creator/youtube/visibility
+├ ƒ /api/invoices
+├ ƒ /api/invoices/[id]/pdf
+├ ƒ /api/notifications
+├ ƒ /api/notifications/[action]
+├ ƒ /api/notifications/mark-all-read
+├ ƒ /api/notifications/stream
+├ ƒ /api/notifications/unread-count
+├ ƒ /api/platform/fees
+├ ƒ /api/posts/[postId]/approve
+├ ƒ /api/posts/[postId]/reject
+├ ƒ /api/tokens/balance
+├ ƒ /api/tokens/purchase
+├ ƒ /api/tokens/test-purchase
+├ ƒ /api/tokens/transactions
+├ ƒ /api/track/pixel
+├ ƒ /api/track/view
+├ ƒ /api/user/onboarding-complete
+├ ƒ /api/user/onboarding-status
+├ ƒ /api/user/profile
+├ ƒ /api/user/role
+├ ƒ /api/user/roles
+├ ƒ /api/wallet
+├ ƒ /api/wallet/config
+├ ƒ /api/wallet/confirm-deposit
+├ ƒ /api/wallet/deposit-intent
+├ ƒ /api/wallet/transactions
+├ ƒ /api/webhooks/psp
+├ ƒ /api/webhooks/psp/simulate
+├ ƒ /api/youtube/fetch-video
+├ ƒ /auth/signin
+├ ƒ /auth/signup
+├ ƒ /campaigns
+├ ƒ /campaigns/[id]
+├ ƒ /creator/pricing
+├ ƒ /dashboard
+├ ƒ /dashboard/admin
+├ ƒ /dashboard/admin/creator-velocity
+├ ƒ /dashboard/admin/pacing-monitor
+├ ƒ /dashboard/admin/youtube-monitoring
+├ ƒ /dashboard/advertiser
+├ ƒ /dashboard/advertiser/business
+├ ƒ /dashboard/advertiser/campaigns/[id]/edit
+├ ƒ /dashboard/advertiser/campaigns/[id]/financial-health
+├ ƒ /dashboard/advertiser/invoices
+├ ƒ /dashboard/advertiser/pacing
+├ ƒ /dashboard/advertiser/video-reviews
+├ ƒ /dashboard/advertiser/wallet
+├ ƒ /dashboard/creator
+├ ƒ /dashboard/creator/analytics
+├ ƒ /dashboard/creator/business
+├ ƒ /dashboard/creator/connect-youtube
+├ ƒ /dashboard/creator/content-spy
+├ ƒ /dashboard/creator/creator-intelligence
+├ ƒ /dashboard/creator/ctr-probability
+├ ƒ /dashboard/creator/expected-value
+├ ƒ /dashboard/creator/invoices
+├ ƒ /dashboard/creator/pattern-blending
+├ ƒ /dashboard/creator/retention-probability
+├ ƒ /dashboard/creator/title-thumbnail
+├ ƒ /dashboard/creator/tokens
+├ ƒ /dashboard/creator/video-research
+├ ƒ /dashboard/creator/video-submissions
+├ ƒ /dashboard/creator/viral-patterns
+├ ƒ /dashboard/creator/wallet
+├ ƒ /how-it-works
+├ ƒ /notifications
+├ ƒ /onboarding
+├ ƒ /onboarding/advertiser
+├ ƒ /pricing
+├ ƒ /privacy
+├ ƒ /settings
+├ ƒ /t/[slug]
+└ ƒ /terms
+
+
+ƒ Proxy (Middleware)
+
+ƒ  (Dynamic)  server-rendered on demand
+
