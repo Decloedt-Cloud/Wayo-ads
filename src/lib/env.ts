@@ -6,6 +6,16 @@ export const env = {
   // Auth
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'dev-secret-key-change-in-production',
   NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'http://localhost:3000',
+  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  
+  // Centralized auth server (Authentication_project)
+  AUTH_API_URL: process.env.AUTH_API_URL || 'http://localhost:8000',
+  AUTH_APP_KEY: process.env.AUTH_APP_KEY || '',
+  AUTH_APP_NAME: process.env.AUTH_APP_NAME || 'wayo_ads',
+
+  // OAuth client credentials (Passport Authorization Code Grant)
+  AUTH_OAUTH_CLIENT_ID: process.env.AUTH_OAUTH_CLIENT_ID || '',
+  AUTH_OAUTH_CLIENT_SECRET: process.env.AUTH_OAUTH_CLIENT_SECRET || '',
   
   // Attribution & Tracking
   ATTRIBUTION_WINDOW_DAYS: parseInt(process.env.ATTRIBUTION_WINDOW_DAYS || '30', 10),

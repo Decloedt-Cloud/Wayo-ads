@@ -1,64 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Megaphone, Loader2 } from 'lucide-react';
+import { Megaphone, Loader2, LogIn } from 'lucide-react';
 import { useLanguage } from '../../translations';
 
 export default function SignInPage() {
   const { t, language } = useLanguage();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [error, setError] = useState('');
 
-  const getLocalizedPath = (path: string) => path;
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+  const callbackUrl = searchParams.get('callbackUrl') || '/campaigns?welcome=1';
 
-  const handleSignIn = async (emailToUse: string, passwordToUse?: string) => {
-    if (isLoading) return;
-
-    setIsLoading(true);
-    setError('');
-
-    const result = await signIn('credentials', {
-      email: emailToUse,
-      password: passwordToUse || '',
-      callbackUrl: `${baseUrl}/campaigns`,
-      redirect: false,
-    });
-
-    if (result?.error) {
-      setError(t('signin.invalidCredentials') || 'Invalid email or password');
-      setIsLoading(false);
-    } else if (result?.ok) {
-      window.location.href = '/campaigns';
+  useEffect(() => {
+    if (searchParams.get('auto') === 'true') {
+      setIsLoading(true);
+      signIn('wayo-auth', { callbackUrl }, { lang: language });
     }
+  }, [searchParams, callbackUrl, language]);
+
+  const handleSSOSignIn = () => {
+    setIsLoading(true);
+    signIn('wayo-auth', { callbackUrl }, { lang: language });
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     setIsGoogleLoading(true);
-    await signIn('google', {
-      callbackUrl: `${baseUrl}/campaigns`,
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await handleSignIn(email, password);
+    signIn('google', { callbackUrl });
   };
 
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center py-12 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href={getLocalizedPath('/')} className="inline-flex items-center gap-2 mb-6">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <Megaphone className="h-8 w-8 text-[#F47A1F]" />
             <span className="font-bold text-2xl text-gray-900">Wayo Ads Market</span>
           </Link>
@@ -74,6 +54,28 @@ export default function SignInPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <Button
+              className="w-full bg-[#F47A1F] hover:bg-[#F06423] flex items-center justify-center gap-2"
+              onClick={handleSSOSignIn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <LogIn className="h-4 w-4" />
+              )}
+              {isLoading ? t('signin.signingIn') : t('signin.signIn')}
+            </Button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white px-2 text-gray-500">{t('signin.or')}</span>
+              </div>
+            </div>
+
             <Button
               type="button"
               variant="outline"
@@ -93,58 +95,12 @@ export default function SignInPage() {
               )}
               {t('signin.continueWithGoogle')}
             </Button>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">{t('signin.or')}</span>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">{t('signin.email')}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder={t('signin.emailPlaceholder')}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              {error && (
-                <p className="text-sm text-red-500">{error}</p>
-              )}
-              <Button type="submit" className="w-full bg-[#F47A1F] hover:bg-[#F06423]" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('signin.signingIn')}
-                  </>
-                ) : (
-                  t('signin.signIn')
-                )}
-              </Button>
-            </form>
           </CardContent>
         </Card>
 
         <p className="mt-4 text-sm text-center text-gray-600">
           {t('signin.noAccount')}{' '}
-          <Link href={getLocalizedPath('/auth/signup')} className="text-[#F47A1F] hover:underline font-medium">
+          <Link href="/auth/signup" className="text-[#F47A1F] hover:underline font-medium">
             {t('signin.signUp')}
           </Link>
         </p>

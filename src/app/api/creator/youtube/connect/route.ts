@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { checkYouTubeConnection } from '@/server/creators/youtubeService';
+import { PKCE_COOKIE_NAME, PKCE_COOKIE_MAX_AGE } from '@/lib/security/oauth';
 
 export async function GET() {
   try {
@@ -20,7 +21,17 @@ export async function GET() {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
     
-    return NextResponse.json({ authUrl: result.authUrl });
+    const response = NextResponse.json({ authUrl: result.authUrl });
+
+    response.cookies.set(PKCE_COOKIE_NAME, result.codeVerifier, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: PKCE_COOKIE_MAX_AGE,
+    });
+
+    return response;
   } catch (error) {
     console.error('[YouTube Connect] Error:', error);
     return NextResponse.json(

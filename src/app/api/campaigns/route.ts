@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { requireAuth } from '@/lib/server-auth';
+import { getCurrentUser, requireAuth } from '@/lib/server-auth';
 import { hasAnyRole } from '@/lib/roles';
 import { getCampaignsWithStats, createCampaign, type CreateCampaignInput } from '@/server/campaigns';
 import {
@@ -109,14 +109,19 @@ export async function GET(request: NextRequest) {
     const advertiserId = searchParams.get('advertiserId');
     const advertiserOnly = searchParams.get('advertiserOnly') === 'true';
     const creatorOnly = searchParams.get('creatorOnly') === 'true';
-    
-    const user = await requireAuth();
-    if (!user.roles || !hasAnyRole(user.roles.join(','), ['ADVERTISER', 'CREATOR', 'SUPERADMIN'])) {
-      return NextResponse.json({ error: 'Forbidden: Requires ADVERTISER, CREATOR, or SUPERADMIN role' }, { status: 403 });
+
+    // Public listing: no auth required when just browsing campaigns (no advertiserOnly/creatorOnly)
+    const isPublicRequest = !advertiserOnly && !creatorOnly && !advertiserId;
+    const user = isPublicRequest ? await getCurrentUser() : await requireAuth();
+
+    if (!isPublicRequest) {
+      if (!user.roles || !hasAnyRole(user.roles.join(','), ['ADVERTISER', 'CREATOR', 'SUPERADMIN'])) {
+        return NextResponse.json({ error: 'Forbidden: Requires ADVERTISER, CREATOR, or SUPERADMIN role' }, { status: 403 });
+      }
     }
 
     const params: any = {};
-    
+
     if (advertiserOnly && user) {
       params.advertiserId = user.id;
       params.includeBudgetLock = true;
@@ -140,7 +145,7 @@ export async function GET(request: NextRequest) {
 
     const result = await getCampaignsWithStats(params);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       campaigns: result.campaigns,
       total: result.total,
       page: result.page,

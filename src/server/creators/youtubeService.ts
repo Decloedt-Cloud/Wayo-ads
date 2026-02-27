@@ -1,5 +1,6 @@
 import { YouTubeProvider } from '@/server/social/providers/youtubeProvider';
 import { creatorChannelRepository } from './repositories';
+import { createSignedState, generatePKCE } from '@/lib/security/oauth';
 
 export async function checkYouTubeConnection(userId: string) {
   const existingChannel = await creatorChannelRepository.findByUserIdAndPlatform(userId, 'YOUTUBE');
@@ -8,17 +9,16 @@ export async function checkYouTubeConnection(userId: string) {
     return { error: 'YouTube channel already connected' };
   }
 
-  const state = Buffer.from(
-    JSON.stringify({
-      userId,
-      timestamp: Date.now(),
-    })
-  ).toString('base64');
+  const state = createSignedState({ userId, timestamp: Date.now() });
+  const pkce = generatePKCE();
 
   const provider = new YouTubeProvider();
-  const authUrl = provider.getAuthorizationUrl(state);
+  const authUrl = provider.getAuthorizationUrl(state, {
+    codeChallenge: pkce.codeChallenge,
+    codeChallengeMethod: pkce.codeChallengeMethod,
+  });
 
-  return { authUrl };
+  return { authUrl, codeVerifier: pkce.codeVerifier };
 }
 
 export async function disconnectYouTubeChannel(userId: string) {

@@ -378,6 +378,7 @@ const translations: Translations = {
   'path.privacy': { en: 'privacy', fr: 'politique-confidentialite', ar: 'سياسة-الخصوصية' },
 
   // Sign In Page
+  'auth.connect.connecting': { en: 'Connecting...', fr: 'Connexion en cours...', ar: 'جاري الاتصال...' },
   'signin.title': { en: 'Welcome back', fr: 'Bon retour', ar: 'مرحبا بعودتك' },
   'signin.subtitle': { en: 'Sign in to your account to continue', fr: 'Connectez-vous à votre compte pour continuer', ar: 'سجّل دخولك للمتابعة' },
   'signin.cardTitle': { en: 'Sign In', fr: 'Se Connecter', ar: 'تسجيل الدخول' },
@@ -397,7 +398,7 @@ const translations: Translations = {
   'signup.title': { en: 'Create your account', fr: 'Créez votre compte', ar: 'أنشئ حسابك' },
   'signup.subtitle': { en: 'Join the creator marketplace', fr: 'Rejoignez la marketplace des créateurs', ar: 'انضم إلى سوق المنشئين' },
   'signup.cardTitle': { en: 'Sign Up', fr: "S'inscrire", ar: 'سجل' },
-  'signup.cardDesc': { en: 'Enter your details to get started', fr: 'Entrez vos détails pour commencer', ar: 'أدخل بياناتك للبدء' },
+  'signup.cardDesc': { en: 'Choose your role and create your account', fr: 'Choisissez votre rôle et créez votre compte', ar: 'اختر دورك وأنشئ حسابك' },
   'signup.name': { en: 'Full Name', fr: 'Nom complet', ar: 'الاسم الكامل' },
   'signup.namePlaceholder': { en: 'Enter your name', fr: 'Entrez votre nom', ar: 'أدخل اسمك' },
   'signup.email': { en: 'Email', fr: 'Email', ar: 'البريد الإلكتروني' },
@@ -410,6 +411,23 @@ const translations: Translations = {
   'signup.creating': { en: 'Creating account...', fr: 'Création du compte...', ar: 'جاري إنشاء الحساب...' },
   'signup.signUp': { en: 'Sign Up', fr: "S'inscrire", ar: 'سجل' },
   'signup.alreadyHaveAccount': { en: 'Already have an account?', fr: 'Déjà un compte?', ar: 'لديك حساب بالفعل؟' },
+
+  // Verify Email Page
+  'verifyEmail.checking': { en: 'Verifying...', fr: 'Vérification...', ar: 'جاري التحقق...' },
+  'verifyEmail.title': { en: 'Verify your email', fr: 'Vérifiez votre email', ar: 'تحقق من بريدك الإلكتروني' },
+  'verifyEmail.subtitle': { en: 'We sent a 6-digit verification code to your email. Enter it below.', fr: 'Nous avons envoyé un code de vérification à 6 chiffres à votre email. Entrez-le ci-dessous.', ar: 'أرسلنا رمز تحقق مكون من 6 أرقام إلى بريدك. أدخله أدناه.' },
+  'verifyEmail.codePlaceholder': { en: '000000', fr: '000000', ar: '000000' },
+  'verifyEmail.submit': { en: 'Verify', fr: 'Vérifier', ar: 'تحقق' },
+  'verifyEmail.invalidCode': { en: 'Invalid or expired code. Please try again or request a new one.', fr: 'Code invalide ou expiré. Réessayez ou demandez-en un nouveau.', ar: 'رمز غير صالح أو منتهي الصلاحية. حاول مرة أخرى أو اطلب رمزًا جديدًا.' },
+  'verifyEmail.checkSpam': { en: "Didn't receive the email? Check your spam folder.", fr: "Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam.", ar: 'لم تتلقَّ البريد؟ تحقق من مجلد الرسائل غير المرغوب فيها.' },
+  'verifyEmail.resend': { en: 'Resend verification email', fr: "Renvoyer l'email de vérification", ar: 'إعادة إرسال بريد التحقق' },
+  'verifyEmail.resending': { en: 'Sending...', fr: 'Envoi en cours...', ar: 'جاري الإرسال...' },
+  'verifyEmail.resent': { en: 'Verification email sent!', fr: 'Email de vérification envoyé !', ar: 'تم إرسال بريد التحقق!' },
+  'verifyEmail.resendFailed': { en: 'Could not resend. Please try again later.', fr: 'Impossible de renvoyer. Réessayez plus tard.', ar: 'تعذر الإرسال. يرجى المحاولة لاحقًا.' },
+  'verifyEmail.logout': { en: 'Sign out', fr: 'Se déconnecter', ar: 'تسجيل الخروج' },
+
+  'welcome.welcome': { en: 'Welcome!', fr: 'Bienvenue!', ar: 'مرحباً!' },
+  'welcome.welcomeName': { en: 'Welcome, {name}!', fr: 'Bienvenue, {name}!', ar: 'مرحباً، {name}!' },
   'onboarding.welcome': { en: 'Welcome to Wayo Ads!', fr: 'Bienvenue sur Wayo Ads!', ar: 'مرحباً بك في Wayo Ads!' },
   'onboarding.subtitle': { en: "Let's set up your creator profile", fr: 'Configurons votre profil créateur', ar: 'لنقم بإعداد ملفك الشخصي كمنشئ' },
   'onboarding.step1Title': { en: 'Your Profile', fr: 'Votre Profil', ar: 'ملفك الشخصي' },

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useSession, signOut, signIn } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -121,7 +121,9 @@ export default function Navbar() {
             </Link>
           )}
 
-          {status === 'authenticated' ? (
+          {status === 'loading' ? (
+            <div className="h-9 w-20" />
+          ) : status === 'authenticated' ? (
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -185,7 +187,7 @@ export default function Navbar() {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => signOut({ callbackUrl: window.location.origin })}
+                    onClick={() => { window.location.href = '/api/auth/federated-logout'; }}
                     className="cursor-pointer text-red-600"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
@@ -209,11 +211,11 @@ export default function Navbar() {
                 </Button>
               </Link>
               <Button
-                onClick={() => signIn(undefined, { callbackUrl: `${window.location.origin}/campaigns` })}
+                onClick={() => signIn(undefined, { callbackUrl: `${window.location.origin}/campaigns?welcome=1` })}
                 size="sm"
                 className="bg-[#F47A1F] hover:bg-[#F06423]"
               >
-                Sign In
+                {t('signin.signIn')}
               </Button>
             </>
           )}

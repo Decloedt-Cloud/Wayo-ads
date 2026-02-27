@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { db } from '@/lib/db';
 import { encrypt } from '@/lib/security/crypto';
 import { YouTubeProvider } from '@/server/social/providers/youtubeProvider';
+import { verifySignedState, PKCE_COOKIE_NAME } from '@/lib/security/oauth';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
@@ -18,23 +19,26 @@ export async function GET(request: Request) {
     if (!code || !state) {
       return NextResponse.redirect(new URL('/dashboard/creator?error=missing_params', request.url));
     }
-    
+
     let stateData: { userId: string; timestamp: number };
     try {
-      stateData = JSON.parse(Buffer.from(state, 'base64').toString('utf-8'));
-    } catch {
+      stateData = verifySignedState(state);
+    } catch (stateError) {
+      console.error('[YouTube Callback] State verification failed:', stateError);
       return NextResponse.redirect(new URL('/dashboard/creator?error=invalid_state', request.url));
     }
-    
-    if (Date.now() - stateData.timestamp > 10 * 60 * 1000) {
-      return NextResponse.redirect(new URL('/dashboard/creator?error=expired_state', request.url));
+
+    const codeVerifier = request.cookies.get(PKCE_COOKIE_NAME)?.value;
+    if (!codeVerifier) {
+      console.error('[YouTube Callback] Missing PKCE code_verifier cookie');
+      return NextResponse.redirect(new URL('/dashboard/creator?error=missing_pkce', request.url));
     }
     
     const provider = new YouTubeProvider();
     
     let tokens;
     try {
-      tokens = await provider.exchangeCodeForTokens(code);
+      tokens = await provider.exchangeCodeForTokens(code, codeVerifier);
     } catch (tokenError) {
       console.error('[YouTube Callback] Token exchange error:', tokenError);
       return NextResponse.redirect(new URL('/dashboard/creator?error=token_exchange_failed', request.url));
@@ -86,9 +90,13 @@ export async function GET(request: Request) {
       },
     });
     
-    return NextResponse.redirect(new URL('/dashboard/creator?success=youtube_connected', request.url));
+    const successResponse = NextResponse.redirect(new URL('/dashboard/creator?success=youtube_connected', request.url));
+    successResponse.cookies.delete(PKCE_COOKIE_NAME);
+    return successResponse;
   } catch (error) {
     console.error('[YouTube Callback] Error:', error);
-    return NextResponse.redirect(new URL('/dashboard/creator?error=connection_failed', request.url));
+    const errorResponse = NextResponse.redirect(new URL('/dashboard/creator?error=connection_failed', request.url));
+    errorResponse.cookies.delete(PKCE_COOKIE_NAME);
+    return errorResponse;
   }
 }

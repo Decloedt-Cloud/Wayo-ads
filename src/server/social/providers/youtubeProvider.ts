@@ -26,8 +26,8 @@ export interface OAuthTokens {
 
 export interface OAuthProvider {
   platform: SocialPlatform;
-  getAuthorizationUrl(state: string): string;
-  exchangeCodeForTokens(code: string): Promise<OAuthTokens>;
+  getAuthorizationUrl(state: string, pkce?: { codeChallenge: string; codeChallengeMethod: string }): string;
+  exchangeCodeForTokens(code: string, codeVerifier?: string): Promise<OAuthTokens>;
   refreshAccessToken(refreshToken: string): Promise<OAuthTokens>;
   getChannelStats(accessToken: string): Promise<ChannelStats>;
   getTopVideos(accessToken: string, maxResults?: number): Promise<TopVideo[]>;
@@ -81,7 +81,7 @@ export class YouTubeProvider implements OAuthProvider {
     ];
   }
   
-  getAuthorizationUrl(state: string): string {
+  getAuthorizationUrl(state: string, pkce?: { codeChallenge: string; codeChallengeMethod: string }): string {
     const params = new URLSearchParams({
       client_id: this.clientId,
       redirect_uri: this.redirectUri,
@@ -91,23 +91,34 @@ export class YouTubeProvider implements OAuthProvider {
       prompt: 'consent',
       state,
     });
+
+    if (pkce) {
+      params.set('code_challenge', pkce.codeChallenge);
+      params.set('code_challenge_method', pkce.codeChallengeMethod);
+    }
     
     return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
   }
   
-  async exchangeCodeForTokens(code: string): Promise<OAuthTokens> {
+  async exchangeCodeForTokens(code: string, codeVerifier?: string): Promise<OAuthTokens> {
+    const body: Record<string, string> = {
+      client_id: this.clientId,
+      client_secret: this.clientSecret,
+      code,
+      grant_type: 'authorization_code',
+      redirect_uri: this.redirectUri,
+    };
+
+    if (codeVerifier) {
+      body.code_verifier = codeVerifier;
+    }
+
     const response = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: new URLSearchParams({
-        client_id: this.clientId,
-        client_secret: this.clientSecret,
-        code,
-        grant_type: 'authorization_code',
-        redirect_uri: this.redirectUri,
-      }),
+      body: new URLSearchParams(body),
     });
     
     if (!response.ok) {

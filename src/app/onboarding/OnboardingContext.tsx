@@ -44,11 +44,12 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (status === 'loading') return;
-    
+
     const type = getUserRole();
     setUserType(type);
-    
-    if (status === 'authenticated' && type) {
+
+    const emailVerified = (session?.user as any)?.emailVerified;
+    if (status === 'authenticated' && type && emailVerified) {
       checkOnboardingStatus(type);
     } else {
       setIsLoading(false);

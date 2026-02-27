@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers";
+import { WelcomeToast } from "@/components/auth/WelcomeToast";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import ImportantAlertBanner from "@/components/notifications/ImportantAlertBanner";
@@ -132,6 +134,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
         <Providers initialLanguage={locale as 'en' | 'fr' | 'ar'}>
+          <Suspense fallback={null}>
+            <WelcomeToast />
+          </Suspense>
           <ImportantAlertBanner />
           <div className="min-h-screen flex flex-col">
             <Navbar />

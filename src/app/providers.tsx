@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { LanguageProvider, Language } from './translations';
 import { OnboardingProvider } from './onboarding/OnboardingContext';
 import OnboardingModal from './onboarding/OnboardingModal';
+import { SilentRefreshProvider } from '@/components/auth/SilentRefreshProvider';
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -24,14 +25,16 @@ export function Providers({ children, initialLanguage }: ProvidersProps) {
 
   return (
     <SessionProvider>
-      <QueryClientProvider client={queryClient}>
-        <LanguageProvider initialLanguage={initialLanguage}>
-          <OnboardingProvider>
-            {children}
-            <OnboardingModal />
-          </OnboardingProvider>
-        </LanguageProvider>
-      </QueryClientProvider>
+      <SilentRefreshProvider>
+        <QueryClientProvider client={queryClient}>
+          <LanguageProvider initialLanguage={initialLanguage}>
+            <OnboardingProvider>
+              {children}
+              <OnboardingModal />
+            </OnboardingProvider>
+          </LanguageProvider>
+        </QueryClientProvider>
+      </SilentRefreshProvider>
     </SessionProvider>
   );
 }

@@ -1201,3 +1201,13 @@ model DomainEvent {
   @@index([userId])
   @@index([processed])
 }
+
+model LogoutEvent {
+  id           String   @id @default(cuid())
+  wayoUserId   String
+  authServerId String?
+  createdAt    DateTime @default(now())
+
+  @@index([wayoUserId])
+  @@index([createdAt])
+}

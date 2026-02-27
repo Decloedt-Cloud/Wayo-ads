@@ -228,7 +228,7 @@ export default function CampaignsPage() {
           <p className="text-gray-600 mb-4">
             {t('campaigns.noCampaignsDesc')}
           </p>
-          {authStatus !== 'authenticated' && (
+          {authStatus === 'unauthenticated' && (
             <Link href={getLocalizedPath('/auth/signin')}>
               <Button className="bg-[#F47A1F] hover:bg-[#F06423]">Sign In to Get Started</Button>
             </Link>

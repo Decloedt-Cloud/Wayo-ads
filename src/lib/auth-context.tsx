@@ -1,6 +1,6 @@
 'use client';
 
-import { SessionProvider, useSession, signIn, signOut } from 'next-auth/react';
+import { SessionProvider, useSession, signIn } from 'next-auth/react';
 import { ReactNode, createContext, useContext } from 'react';
 
 type AuthContextType = {
@@ -37,8 +37,7 @@ function AuthProviderInner({ children }: { children: ReactNode }) {
   };
 
   const handleSignOut = async () => {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-    await signOut({ callbackUrl: baseUrl });
+    window.location.href = '/api/auth/federated-logout';
   };
 
   return (

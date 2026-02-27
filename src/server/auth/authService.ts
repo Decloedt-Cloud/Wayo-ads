@@ -1,5 +1,5 @@
-import { userRepository } from '@/server/admin/repositories';
-import { hashPassword } from '@/lib/password';
+import { db } from '@/lib/db';
+import { authApiRegister, AuthApiError } from '@/lib/auth-api';
 
 export interface RegisterInput {
   name: string;
@@ -15,6 +15,10 @@ export interface RegisterResult {
   roles: string;
 }
 
+/**
+ * Registers a user via the centralized Authentication_project API,
+ * then syncs the user record to the local Prisma database.
+ */
 export async function registerUser(input: RegisterInput): Promise<RegisterResult> {
   const { name, email, role = 'ADVERTISER', password } = input;
 
@@ -30,26 +34,40 @@ export async function registerUser(input: RegisterInput): Promise<RegisterResult
     throw new Error('Password must be at least 8 characters');
   }
 
-  const existingUser = await userRepository.findByEmail(email);
+  try {
+    const authData = await authApiRegister({ name, email, password, role });
 
-  if (existingUser) {
-    throw new Error('User already exists');
+    const appRole = authData.user.app_role || role;
+    const userRoles = appRole === 'USER' ? 'USER' : `USER,${appRole}`;
+
+    const existing = await db.user.findUnique({ where: { email } });
+
+    let localUser;
+    if (existing) {
+      localUser = await db.user.update({
+        where: { email },
+        data: { name, roles: userRoles },
+      });
+    } else {
+      localUser = await db.user.create({
+        data: { email, name, roles: userRoles },
+      });
+    }
+
+    return {
+      id: localUser.id,
+      email: localUser.email,
+      name: localUser.name,
+      roles: localUser.roles,
+    };
+  } catch (error) {
+    if (error instanceof AuthApiError) {
+      if (error.errors?.email) {
+        throw new Error('User already exists');
+      }
+      throw new Error(error.message);
+    }
+    console.error('[Register] Auth API error:', error);
+    throw new Error('Authentication service unavailable');
   }
-
-  const userRoles = role === 'ADVERTISER' ? 'USER,ADVERTISER' : 'USER,CREATOR';
-  const hashedPassword = hashPassword(password);
-
-  const user = await userRepository.create({
-    email,
-    name,
-    password: hashedPassword,
-    roles: userRoles,
-  });
-
-  return {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    roles: user.roles,
-  };
 }

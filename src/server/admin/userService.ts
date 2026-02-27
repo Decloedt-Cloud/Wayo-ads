@@ -1,4 +1,6 @@
 import { userRepository } from './repositories';
+import { db } from '@/lib/db';
+import { env } from '@/lib/env';
 
 export interface AdminUserListParams {
   role?: string;
@@ -72,5 +74,30 @@ export async function updateUserRoles(userId: string, roles: string): Promise<Ad
 }
 
 export async function deleteUser(userId: string): Promise<void> {
+  const account = await db.account.findFirst({
+    where: { userId, provider: 'wayo-auth' },
+    select: { providerAccountId: true },
+  });
+
+  if (account?.providerAccountId) {
+    try {
+      const authUrl = env.AUTH_API_URL.replace(/\/$/, '');
+      const res = await fetch(`${authUrl}/api/internal/delete-user`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-App-Key': env.AUTH_APP_KEY,
+        },
+        body: JSON.stringify({ auth_user_id: parseInt(account.providerAccountId, 10) }),
+      });
+
+      if (!res.ok && res.status !== 404) {
+        console.warn(`[cross-delete] Auth server responded ${res.status}:`, await res.text());
+      }
+    } catch (err) {
+      console.error('[cross-delete] Failed to notify auth server:', err);
+    }
+  }
+
   await userRepository.delete(userId);
 }
