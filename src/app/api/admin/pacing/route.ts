@@ -4,14 +4,11 @@ import { requireSuperAdmin } from '@/lib/server-auth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const authError = await requireSuperAdmin();
-    if (authError) {
-      return authError;
-    }
+    await requireSuperAdmin();
 
-    const campaigns = await (db.campaign as any).findMany({
+    const campaigns = await db.campaign.findMany({
       where: {
         pacingEnabled: true,
         status: 'ACTIVE',
@@ -44,23 +41,36 @@ export async function GET(request: NextRequest) {
     });
 
     const now = new Date();
+
     const pacingStatuses = campaigns.map((campaign) => {
       const startDate = campaign.campaignStartDate || now;
       const hoursElapsed = Math.max(1, (now.getTime() - startDate.getTime()) / (1000 * 60 * 60));
-      const campaignDurationHours = campaign.campaignEndDate
-        ? (campaign.campaignEndDate.getTime() - startDate.getTime()) / (1000 * 60 * 60)
-        : hoursElapsed * 2;
+
+      const campaignDurationHours =
+        campaign.campaignEndDate
+          ? (campaign.campaignEndDate.getTime() - startDate.getTime()) / (1000 * 60 * 60)
+          : hoursElapsed * 2; // fallback si pas de date de fin
 
       const hoursRemaining = Math.max(0, campaignDurationHours - hoursElapsed);
-      const targetSpendPerHour = campaign.targetSpendPerHourCents || 
-        Math.floor(campaign.totalBudgetCents / campaignDurationHours);
-      const actualSpendPerHour = Math.floor(campaign.spentBudgetCents / hoursElapsed);
-      
-      const deliveryProgress = campaign.totalBudgetCents > 0
-        ? (campaign.spentBudgetCents / campaign.totalBudgetCents) * 100
-        : 0;
 
-      const targetProgressPercent = (hoursElapsed / campaignDurationHours) * 100;
+      // Calcul du target par heure avec protection division par zéro
+      const fallbackTargetPerHour =
+        campaignDurationHours > 0
+          ? Math.floor(campaign.totalBudgetCents / campaignDurationHours)
+          : 0;
+
+      const targetSpendPerHourCents = campaign.targetSpendPerHourCents ?? fallbackTargetPerHour;
+
+      const actualSpendPerHour = hoursElapsed > 0 ? Math.floor(campaign.spentBudgetCents / hoursElapsed) : 0;
+
+      const deliveryProgress =
+        campaign.totalBudgetCents > 0
+          ? (campaign.spentBudgetCents / campaign.totalBudgetCents) * 100
+          : 0;
+
+      const targetProgressPercent =
+        campaignDurationHours > 0 ? (hoursElapsed / campaignDurationHours) * 100 : 0;
+
       const variance = deliveryProgress - targetProgressPercent;
 
       const isOverDelivering = variance > 20;
@@ -68,8 +78,11 @@ export async function GET(request: NextRequest) {
 
       let predictedExhaustionDate: string | null = null;
       if (actualSpendPerHour > 0 && campaign.spentBudgetCents < campaign.totalBudgetCents) {
-        const hoursUntilExhaustion = (campaign.totalBudgetCents - campaign.spentBudgetCents) / actualSpendPerHour;
-        predictedExhaustionDate = new Date(now.getTime() + hoursUntilExhaustion * 60 * 60 * 1000).toISOString();
+        const remainingCents = campaign.totalBudgetCents - campaign.spentBudgetCents;
+        const hoursUntilExhaustion = remainingCents / actualSpendPerHour;
+        predictedExhaustionDate = new Date(
+          now.getTime() + hoursUntilExhaustion * 3600000 // 60*60*1000
+        ).toISOString();
       }
 
       let recommendedAction: 'BOOST' | 'MAINTAIN' | 'REDUCE' | 'NONE' = 'NONE';
@@ -91,7 +104,7 @@ export async function GET(request: NextRequest) {
         spentBudgetCents: campaign.spentBudgetCents,
         dailyBudgetCents: campaign.dailyBudgetCents,
         campaignDurationHours,
-        targetSpendPerHourCents: targetSpendPerHour,
+        targetSpendPerHourCents,
         actualSpendPerHourCents: actualSpendPerHour,
         deliveryProgressPercent: deliveryProgress,
         isOverDelivering,
@@ -107,15 +120,24 @@ export async function GET(request: NextRequest) {
       campaigns: pacingStatuses,
       summary: {
         totalCampaigns: pacingStatuses.length,
-        overDelivering: pacingStatuses.filter(c => c.isOverDelivering).length,
-        underDelivering: pacingStatuses.filter(c => c.isUnderDelivering).length,
-        onTrack: pacingStatuses.length - pacingStatuses.filter(c => c.isOverDelivering).length - pacingStatuses.filter(c => c.isUnderDelivering).length,
+        overDelivering: pacingStatuses.filter((c) => c.isOverDelivering).length,
+        underDelivering: pacingStatuses.filter((c) => c.isUnderDelivering).length,
+        onTrack:
+          pacingStatuses.length -
+          pacingStatuses.filter((c) => c.isOverDelivering).length -
+          pacingStatuses.filter((c) => c.isUnderDelivering).length,
         totalBudget: pacingStatuses.reduce((sum, c) => sum + c.totalBudgetCents, 0),
         totalSpent: pacingStatuses.reduce((sum, c) => sum + c.spentBudgetCents, 0),
       },
     });
   } catch (error) {
     console.error('Error fetching pacing data:', error);
+    if (error instanceof Error && error.message === 'Unauthorized') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (error instanceof Error && error.message.startsWith('Forbidden')) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     return NextResponse.json(
       { error: 'Failed to fetch pacing data' },
       { status: 500 }
