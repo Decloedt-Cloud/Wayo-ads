@@ -2,6 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireRole } from '@/lib/server-auth';
 
+// Interfaces pour typer les résultats des queries raw Prisma
+interface DailyCostRow {
+  date: string;          // DATE() retourne généralement une string au format YYYY-MM-DD
+  requests: bigint;
+  totalCost: number | string;
+  tokensCharged: bigint;
+  totalTokens: bigint;
+}
+
+interface HourlyCostRow {
+  hour: string;          // DATE_FORMAT retourne une string comme 'YYYY-MM-DD HH:00'
+  requests: bigint;
+  totalCost: number | string;
+}
+
 export async function GET(request: NextRequest) {
   try {
     await requireRole('SUPERADMIN');
@@ -115,7 +130,8 @@ export async function GET(request: NextRequest) {
     });
     const creatorMap = new Map(creators.map(c => [c.id, c]));
 
-    const dailyCosts = await db.$queryRaw`
+    // Query raw typée
+    const dailyCosts = await db.$queryRaw<DailyCostRow[]>`
       SELECT 
         DATE(createdAt) as date,
         COUNT(*) as requests,
@@ -128,7 +144,7 @@ export async function GET(request: NextRequest) {
       ORDER BY date ASC
     `;
 
-    const hourlyCosts = await db.$queryRaw`
+    const hourlyCosts = await db.$queryRaw<HourlyCostRow[]>`
       SELECT 
         DATE_FORMAT(createdAt, '%Y-%m-%d %H:00') as hour,
         COUNT(*) as requests,
@@ -151,7 +167,7 @@ export async function GET(request: NextRequest) {
       _count: true,
     });
 
-    const avgCost = totalStats._sum.estimatedCostUsd || 0 / Math.max(totalStats._count, 1);
+    const avgCost = (totalStats._sum.estimatedCostUsd || 0) / Math.max(totalStats._count, 1);
     const stdDevThreshold = avgCost * 3;
     const anomalies = anomalyCheck
       .filter(a => (a._sum.estimatedCostUsd || 0) > stdDevThreshold && stdDevThreshold > 0)
@@ -227,14 +243,14 @@ export async function GET(request: NextRequest) {
         tokenRevenueUsd: c._sum.tokenRevenueUsd || 0,
         marginUsd: c._sum.marginUsd || 0,
       })),
-      dailyCosts: dailyCosts.map((d: any) => ({
+      dailyCosts: dailyCosts.map(d => ({
         date: d.date,
         requests: Number(d.requests),
         costUsd: Number(d.totalCost),
         tokensCharged: Number(d.tokensCharged),
         totalTokens: Number(d.totalTokens),
       })),
-      hourlyCosts: hourlyCosts.map((h: any) => ({
+      hourlyCosts: hourlyCosts.map(h => ({
         hour: h.hour,
         requests: Number(h.requests),
         costUsd: Number(h.totalCost),
